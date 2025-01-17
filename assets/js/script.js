@@ -1,55 +1,90 @@
-const imageComparisonSlider = document.querySelector('[data-component="image-comparison-slider"]')
+const slider = document.getElementById('before-after-slider');
+const before = document.getElementById('before-image');
+const beforeImage = before.getElementsByTagName('img')[0];
+const resizer = document.getElementById('resizer');
 
-function setSliderstate(e, element) {
-  const sliderRange = element.querySelector('[data-image-comparison-range]');
+let active = false;
 
-  if (e.type === 'input') {
-    sliderRange.classList.add('image-comparison__range--active');
-    return;
+//Sort overflow out for Overlay Image
+document.addEventListener("DOMContentLoaded", function() {
+  let width = slider.offsetWidth;
+  console.log(width);
+  beforeImage.style.width = width + 'px';
+});
+
+//Adjust width of image on resize 
+window.addEventListener('resize', function() {
+  let width = slider.offsetWidth;
+  console.log(width);
+  beforeImage.style.width = width + 'px';
+})
+
+resizer.addEventListener('mousedown',function(){
+  active = true;
+ resizer.classList.add('resize');
+
+});
+
+document.body.addEventListener('mouseup',function(){
+  active = false;
+ resizer.classList.remove('resize');
+});
+
+document.body.addEventListener('mouseleave', function() {
+  active = false;
+  resizer.classList.remove('resize');
+});
+
+document.body.addEventListener('mousemove',function(e){
+  if (!active) return;
+  let x = e.pageX;
+  x -= slider.getBoundingClientRect().left;
+  slideIt(x);
+  pauseEvent(e);
+});
+
+resizer.addEventListener('touchstart',function(){
+  active = true;
+  resizer.classList.add('resize');
+});
+
+document.body.addEventListener('touchend',function(){
+  active = false;
+  resizer.classList.remove('resize');
+});
+
+document.body.addEventListener('touchcancel',function(){
+  active = false;
+  resizer.classList.remove('resize');
+});
+
+//calculation for dragging on touch devices
+document.body.addEventListener('touchmove',function(e){
+  if (!active) return;
+  let x;
+  
+  let i;
+  for (i=0; i < e.changedTouches.length; i++) {
+  x = e.changedTouches[i].pageX; 
   }
+  
+  x -= slider.getBoundingClientRect().left;
+  slideIt(x);
+  pauseEvent(e);
+});
 
-  sliderRange.classList.remove('image-comparison__range--active');
-  element.removeEventListener('mousemove', moveSliderThumb);
+function slideIt(x){
+    let transform = Math.max(0,(Math.min(x,slider.offsetWidth)));
+    before.style.width = transform+"px";
+    resizer.style.left = transform-0+"px";
 }
 
-function moveSliderThumb(e) {
-  const sliderRange = document.querySelector('[data-image-comparison-range]');
-  const thumb = document.querySelector('[data-image-comparison-thumb]');
-  let position = e.layerY - 20;
-
-  if (e.layerY <= sliderRange.offsetTop) {
-    position = -20;
-  }
-
-  if (e.layerY >= sliderRange.offsetHeight) {
-    position = sliderRange.offsetHeight - 20;
-  }
-
-  thumb.style.top = `${position}px`;
+//stop divs being selected.
+function pauseEvent(e){
+    if(e.stopPropagation) e.stopPropagation();
+    if(e.preventDefault) e.preventDefault();
+    e.cancelBubble=true;
+    e.returnValue=false;
+    return false;
 }
 
-function moveSliderRange(e, element) {
-  const value = e.target.value;
-  const slider = element.querySelector('[data-image-comparison-slider]');
-  const imageWrapperOverlay = element.querySelector('[data-image-comparison-overlay]');
-
-  slider.style.left = `${value}%`;
-  imageWrapperOverlay.style.width = `${value}%`;
-
-  element.addEventListener('mousemove', moveSliderThumb);
-  setSliderstate(e, element);
-}
-
-function init(element) {
-  const sliderRange = element.querySelector('[data-image-comparison-range]');
-
-  if ('ontouchstart' in window === false) {
-    sliderRange.addEventListener('mouseup', e => setSliderstate(e, element));
-    sliderRange.addEventListener('mousedown', moveSliderThumb);
-  }
-
-  sliderRange.addEventListener('input', e => moveSliderRange(e, element));
-  sliderRange.addEventListener('change', e => moveSliderRange(e, element));
-}
-
-init(imageComparisonSlider);
