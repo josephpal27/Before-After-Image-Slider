@@ -7,29 +7,16 @@ body {
   background:linear-gradient(62deg,#c93072 5%,#3365c0) fixed;
 }
 
-h1 {
-  color: white;
-  text-align:center;
-  font-family: 'Roboto', sans-serif;
-  margin-bottom:0;
-}
-
-.line {
-  width:100px;
-  height:1px;
-  margin:20px auto 40px auto;
-  border-bottom:1px solid white;
-}
-
 img {
   width:100%;
   display:block;
+  user-select: none;
 }
 
 .container {
-  width:50%;
-  display:block;
-  margin:30px auto
+  width: 37%;
+  display: block;
+  margin: 50px auto
 }
 
 #before-after-slider {
@@ -63,13 +50,13 @@ img {
   height:100%;
   width:4px;
   background:white;
-  /*Stop vertical scrolling on touch*/
   -ms-touch-action: pan-y;
-    touch-action: pan-y;
+  touch-action: pan-y;
 }
 
 #resizer:after {
   background:linear-gradient(62deg,#c93072 5%,#3365c0);
+  /* background: #d13a5e; */
   font-family: "Font Awesome 5 Free";
   content:'\f337';
   font-weight:900;
@@ -83,7 +70,6 @@ img {
   height:40px;
   border-radius:50%;
   border:3px solid white;
-
 }
 
 @media (max-width:767px) {
